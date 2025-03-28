@@ -25,7 +25,6 @@ export default function NewsFetcher() {
         } catch (error) {
             setError(error instanceof Error ? error.message : 'Unknown error');
             setArticles([]);
-            return;
 
         } finally {
             setLoading(false);
