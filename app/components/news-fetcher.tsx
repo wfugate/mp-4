@@ -10,14 +10,26 @@ interface NewsArticle {
 
 export default function NewsFetcher() {
     const [articles, setArticles] = useState<NewsArticle[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [, setLoading] = useState(false);
+    const [, setError] = useState<string | null>(null);
 
     const fetchNews = async () => {
         setLoading(true);
-        const response = await fetch("/api/news");
-        const data = await response.json();
-        setArticles(data.news);
-        setLoading(false);
+        try{
+            const response = await fetch("/api/news");
+            const data = await response.json();
+            if (!response.ok) {
+                setError('Failed to fetch news');
+            }
+            setArticles(data.news || data);
+        } catch (error) {
+            setError(error instanceof Error ? error.message : 'Unknown error');
+            setArticles([]);
+
+        } finally {
+            setLoading(false);
+        }
+
     };
 
     useEffect(() => {
