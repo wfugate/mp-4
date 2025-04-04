@@ -15,22 +15,26 @@ export default function NewsFetcher() {
 
     const fetchNews = async () => {
         setLoading(true);
-        try{
+        try {
             const response = await fetch("/api/news");
-            const data = await response.json();
             if (!response.ok) {
                 setError('Failed to fetch news');
             }
-            setArticles(data.news || data);
-        } catch (error) {
-            setError(error instanceof Error ? error.message : 'Unknown error');
-            setArticles([]);
-            return;
+            const data = await response.json();
 
+            const newsData = Array.isArray(data.news) ? data.news :
+                Array.isArray(data) ? data : [{
+                    title: "ERROR",
+                    description: 'Error fetching news, you may be out of API requests.',
+                    url: "#",
+                    published: new Date().toISOString()
+                }];
+            setArticles(newsData);
+        } catch (error) {
+            console.error(error);
         } finally {
             setLoading(false);
         }
-
     };
 
     useEffect(() => {
